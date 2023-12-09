@@ -1,0 +1,13 @@
+"""
+
+sesion | chat | feedback
+1       U:...
+        P:...
+        U:... | cool!
+
+2       U:...
+        P:...
+        U:... | bad!
+
+
+"""
