@@ -14,18 +14,19 @@ def PageSession(pg: PageData):
         Связь GUI и модуля работы с OpenAI
         REQUEST(e) ---> request_() ---> GPT
         """
-        buffer = TextFieldforWrite.value
-        TextFieldforWrite.value = ''
-        TextFieldforWrite.disabled = True
-        TextFieldforWrite.update()
-        ChangeTextField()
+        if TextFieldforWrite.value.strip():
+            buffer = TextFieldforWrite.value
+            TextFieldforWrite.value = ''
+            TextFieldforWrite.disabled = True
+            TextFieldforWrite.update()
+            ChangeTextField()
 
-        TextField.value += f"{buffer}\n\n"
-        pg.page.update()
+            TextField.value += f"{buffer}\n\n"
+            pg.page.update()
 
-        TextField.value += f"Нᴇйᴩоᴨᴄихоᴧоᴦ: {request_(buffer)}\n\n"
-        TextFieldforWrite.disabled = False
-        pg.page.update()
+            TextField.value += f"Нᴇйᴩоᴨᴄихоᴧоᴦ: {request_(buffer)}\n\n"
+            TextFieldforWrite.disabled = False
+            pg.page.update()
 
     # DIALOGS - LEAVE
     def ChangeTextField(e=None) -> None:
@@ -46,14 +47,12 @@ def PageSession(pg: PageData):
 
     def confirmLeave(e=None) -> None:
         exitConfirmation.open = False
-        session.SessionReset()
         pg.page.update()
-
-        pg.navigator.navigate_homepage(pg.page)
+        pg.navigator.navigate("feedback", pg.page)
 
     def Leave(e) -> None:
-        if session.HISTORY[1:] == []:
-            confirmLeave()
+        if session.HISTORY[1:] == [] and session.CLEAR_HISTORY == False:
+            pg.navigator.navigate_homepage(pg.page)
         else:
             pg.page.dialog = exitConfirmation
             exitConfirmation.open = True
@@ -73,6 +72,7 @@ def PageSession(pg: PageData):
         TextField.update()
         cursor.execute("UPDATE sessions SET history = ? WHERE id = ?", ("История удалена.", session.USER_SESSION_ID))
         connect.commit()
+        session.CLEAR_HISTORY = True
         session.HISTORY = session.HISTORY[:1]
         clearHistoryConfirmation.open = False
         pg.page.update()
@@ -124,13 +124,13 @@ def PageSession(pg: PageData):
 
     InfoApplication = ft.AlertDialog(
         title=ft.Text("Информация о приложении"),
-        content=ft.Text(session.textInfo)
+        content=ft.Text(session.TEXT_INFO)
     )
 
     # OTHER WIDGETS IN PAGE
     TextField = ft.TextField(
         multiline=True,
-        width=550, min_lines=19,
+        width=550, min_lines=19, max_lines=19,
         read_only=True,
         text_style=ft.TextStyle(shadow=ft.BoxShadow(
                                 spread_radius=1,
@@ -140,10 +140,10 @@ def PageSession(pg: PageData):
                                 blur_style=ft.ShadowBlurStyle.SOLID))
     )
     TextFieldforWrite = ft.TextField(
-        multiline=True,
         width=550,
         max_lines=1,
         on_change=ChangeTextField,
+        on_submit=REQUEST,
         label="Введите сообщение..."
     )
     TextFieldforWrite.width -= 50
@@ -178,7 +178,7 @@ def PageSession(pg: PageData):
             colors=["#42445f",
                     "#1d1e2a"]),
         width=pg.page.width,
-        height=1000,
+        height=pg.page.window_height,
         margin=-10,
         content=ft.Stack([
             ft.Row([

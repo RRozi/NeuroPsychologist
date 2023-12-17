@@ -1,5 +1,5 @@
-
 import logging
+import os.path
 from logging.handlers import TimedRotatingFileHandler
 import datetime
 from dotenv import load_dotenv
@@ -11,7 +11,7 @@ load_dotenv()
 
 from Interface.HomePage import Home
 from Interface.SessionPage import PageSession
-
+from Interface.FeedbackPage import PageFeedBack
 
 # function loggings
 def loggout() -> None:
@@ -24,6 +24,8 @@ def loggout() -> None:
     logging.root.handlers = []
     log_file_name = datetime.datetime.now().strftime("%Y-%m-%d")
 
+    if not os.path.exists("logs"):
+        os.makedirs("logs")
 
     # Создаем обработчик для записи в файл, при этом каждый раз добавляя логи в конец файла
     file_handler = TimedRotatingFileHandler(f'logs/app_{log_file_name}.log', when='midnight', interval=1, backupCount=30,
@@ -46,7 +48,7 @@ def main(page: Page) -> None:
     page.window_resizable = False
     page.window_maximizable = False
     page.theme_mode = ThemeMode.DARK
-    page.bgcolor = ft.colors.PURPLE
+    page.bgcolor = '#222331'
     page.fonts = {
         "Borsok": "/fonts/Borsok.ttf",
         "Comic": "/fonts/Comic.otf"
@@ -56,10 +58,12 @@ def main(page: Page) -> None:
     flet_navigator = VirtualFletNavigator(
          {
             '/': Home,
-            'session': PageSession
+            'session': PageSession,
+            'feedback': PageFeedBack
          },
     )
     flet_navigator.render(page)
 
-app(target=main, assets_dir="static")
+if __name__ == '__main__':
+    app(target=main, assets_dir="static")
 
