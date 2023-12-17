@@ -21,11 +21,9 @@ def add_History(role: str, content: str) -> None:
         }
     )
 
-time_out = 1
-def request_(UserPromt):
-    global time_out
+def request_(UserPromt: str, time_out = 1) -> str:
     try:
-        add_History("user", UserPromt)
+        add_History("user", UserPromt)  # Запись ответа ПОЛЬЗОВАТЕЛЯ в ИСТОРИЮ
         request = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=session.HISTORY,
@@ -47,11 +45,9 @@ def request_(UserPromt):
     except TypeError:
         logging.error(f"Ошибка при попытке ответить на вопрос! \n Сессия ---> {session.HISTORY}")
         time.sleep(time_out)
-        time_out += 3
-        request_(UserPromt)
+        request_(UserPromt, time_out + 3)
 
     else:
         print("Нейропсихолог:", request)
-        time_out = time_out = 0.5
-        logging.info(f"Ответ дан корректно. Время тайм-аута сброшенно до {time_out}")
+        logging.info(f"Ответ дан корректно.")
         return request

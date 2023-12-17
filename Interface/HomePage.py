@@ -1,24 +1,15 @@
 from flet import *
 import flet as ft
 from flet_navigator import PageData
+from layout import session
 
 import threading
 import time
 
-DESCRIPTION = """
-Привет! Я твой нейропсихолог, оборудованный ИИ
-и помогу тебе понять и улучшить своё психическое здоровье.
-Давай обсудим твои мысли, чувства и поведение, 
-избегая тем политики, самоубийства, религии, жестокого контента. 
-Вместе мы можем добиться замечательных результатов 
-"""
-
 def Home(pg: PageData) -> None:
     pg.page.bgcolor = '#222331'
     pg.page.update()
-    #pg.navigator.navigate("session", pg.page)
-
-    def animate():
+    def animate() -> None:
         time.sleep(0.2)
 
         Title.opacity = 1.0
@@ -26,7 +17,6 @@ def Home(pg: PageData) -> None:
         Description.opacity = 1.0
 
         pg.page.update()
-
 
     Title = ft.Text(
         size=72,
@@ -52,7 +42,7 @@ def Home(pg: PageData) -> None:
     )
 
     Description = ft.Text(
-        DESCRIPTION,
+        session.DESCRIPTION,
         size=13,
         text_align=TextAlign.CENTER,
         color="#97ab7b",
@@ -79,7 +69,7 @@ def Home(pg: PageData) -> None:
             colors=["#42445f",
                     "#1d1e2a"]),
         width=pg.page.width,
-        height=1000,
+        height=pg.page.window_height,
         margin=-10,
         content=ft.Stack([
             ft.Column(

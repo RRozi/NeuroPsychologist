@@ -1,5 +1,17 @@
 class Session:
-    textInfo = """
+    USER_SESSION_ID = None
+
+    CLEAR_HISTORY = False
+
+    DESCRIPTION = """
+    Привет! Я твой нейропсихолог, оборудованный ИИ
+    и помогу тебе понять и улучшить своё психическое здоровье.
+    Давай обсудим твои мысли, чувства и поведение, 
+    избегая тем политики, самоубийства, религии, жестокого контента. 
+    Вместе мы можем добиться замечательных результатов 
+    """
+
+    TEXT_INFO = """
     Приложение было создано...
     Для.... В... Где... Кем... Зачем...
     Причина.. Почему.. Когда.. Во сколько...
@@ -14,7 +26,6 @@ class Session:
     Доверься мне, вместе мы можем добиться замечательных результатов!
     """
 
-    # data
     PSYHOLOGIST_PROMT = """
     Ты нейропсихолог! - твоя задача помогать людям с их состоянием.
 
@@ -37,13 +48,11 @@ class Session:
             "role": "system",
             "content": PSYHOLOGIST_PROMT
         },
-
     ]
 
-    USER_SESSION_ID = None
-
-    def SessionReset(self):
+    def SessionReset(self) -> None:
         self.USER_SESSION_ID = None
+        self.CLEAR_HISTORY = False
         self.HISTORY = self.HISTORY[:1]
 
 session = Session()
