@@ -3,14 +3,23 @@ import flet as ft
 from flet_navigator import PageData
 import json
 from layout import session
+from GPT import LogInExls
 from db import connect, cursor
 
-FeedBackDB = {
+FeedBackDB = [{
     "score":'',
     "comment":''
-}
+}]
 
 def PageFeedBack(pg: PageData):
+
+    def PageEventResize(e: ControlEvent):
+        if e.data == "resized" or "enterFullScreen" or "leaveFullScreen":
+            _mainContainer.width = pg.page.window_width
+            _mainContainer.height = pg.page.window_height
+            pg.page.update()
+
+    pg.page.on_window_event = PageEventResize
 
     Title = ft.Text(
         size=65,
@@ -33,23 +42,25 @@ def PageFeedBack(pg: PageData):
 
     feedBackMessage = ft.TextField(
         multiline=True,
-        min_lines=10, max_lines=10,
-        width=550,
+        min_lines=12, max_lines=12,
+        width=700,
         disabled=True
     )
 
     def selectedScore(e, score: str) -> None:
-        FeedBackDB['score'] = score.strip(", ")
+        FeedBackDB[0]['score'] = score.strip(", ")
         feedBackMessage.value = score
         feedBackMessage.disabled = False
-        feedBackMessage.update()
+        buttonConfirm.disabled = False
+        pg.page.update()
         feedBackMessage.focus()
 
     def Completion(e):
-        FeedBackDB['comment'] = feedBackMessage.value
+        FeedBackDB[0]['comment'] = feedBackMessage.value
         cursor.execute("UPDATE sessions SET feedback = ? WHERE id = ?",
                        (json.dumps(FeedBackDB, indent=4, ensure_ascii=False), session.USER_SESSION_ID))
         connect.commit()
+        LogInExls(idCol=3, value=FeedBackDB)
         session.SessionReset()
         pg.navigator.navigate_homepage(pg.page)
 
@@ -87,6 +98,7 @@ def PageFeedBack(pg: PageData):
         height=50,
         bgcolor=ft.colors.with_opacity(0.4, "#356e2d"),
         color="#58ab4d",
+        disabled=True,
         on_click=Completion
     )
 
@@ -100,12 +112,11 @@ def PageFeedBack(pg: PageData):
         height=pg.page.window_height,
         margin=-10,
         content=ft.Stack([
-            ft.Container(Title,
-                         alignment=alignment.top_center,
-                         margin=margin.only(top=170)
-                         ),
             ft.Column(
                 [
+                    ft.Container(Title,
+                                 alignment=alignment.top_center,
+                                 ),
                     ft.Container(
                         scoreIcon,
                         alignment=alignment.center,
@@ -118,12 +129,12 @@ def PageFeedBack(pg: PageData):
                     ft.Container(
                         buttonConfirm,
                         alignment=alignment.bottom_center,
-                        margin=margin.only(top=90)
+                        margin=margin.only(top=10)
                     )
                 ],
                 alignment=MainAxisAlignment.CENTER
             )
-        ], )
+        ])
     )
 
     pg.page.add(
