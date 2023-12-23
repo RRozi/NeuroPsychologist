@@ -2,16 +2,13 @@ import json
 from db import connect, cursor
 import time
 import logging
-import os
-from openai import OpenAI
 from layout import session
 import openpyxl
+from shuttleai import *
+import os
 
-# OpenAI
-client = OpenAI(
-    api_key=os.getenv("OPENAI"),
-    base_url="http://localhost:1337/v1"
-)
+# Suttle
+shuttle = ShuttleClient(api_key=os.getenv("SHUTTLE"))
 
 # Работа с Exls
 workbook = openpyxl.load_workbook("sessions.xlsx")
@@ -58,11 +55,11 @@ def add_History(role: str, content: str) -> None:
 def request_(UserPromt: str, time_out = 1) -> str:
     try:
         add_History("user", UserPromt)  # Запись ответа ПОЛЬЗОВАТЕЛЯ в ИСТОРИЮ
-        request = client.chat.completions.create(
-            model="gpt-3.5-turbo",
+        request = shuttle.chat_completion(
+            model="gpt-4",
             messages=session.HISTORY,
             stream=False,
-        ).choices[0].message.content
+        )['choices'][0]['message']['content']
         add_History("assistant", request)  # Запись ответа GPT в ИСТОРИЮ
 
         if session.USER_SESSION_ID:
@@ -76,7 +73,8 @@ def request_(UserPromt: str, time_out = 1) -> str:
             connect.commit()
             session.USER_SESSION_ID = cursor.lastrowid
         LogInExls(idCol=2, value=session.HISTORY_DATEBASE)
-    except TypeError:
+    except TypeError as e:
+        print(e)
         logging.error(f"Ошибка при попытке ответить на вопрос! \n Сессия ---> {session.HISTORY}")
         time.sleep(time_out)
         request_(UserPromt, time_out + 3)
