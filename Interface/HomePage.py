@@ -7,15 +7,20 @@ import threading
 import time
 
 def Home(pg: PageData) -> None:
+    def PageEventResize(e: ControlEvent):
+        if e.data == "resized" or "enterFullScreen" or "leaveFullScreen":
+            _mainContainer.width = pg.page.window_width
+            _mainContainer.height = pg.page.window_height
+            pg.page.update()
+
     pg.page.bgcolor = '#222331'
+    pg.page.on_window_event = PageEventResize
     pg.page.update()
     def animate() -> None:
         time.sleep(0.2)
-
         Title.opacity = 1.0
-        Title.offset = (0.07, -2.3)
+        #Title.offset = (0.07, -2.3)
         Description.opacity = 1.0
-
         pg.page.update()
 
     Title = ft.Text(
@@ -43,7 +48,7 @@ def Home(pg: PageData) -> None:
 
     Description = ft.Text(
         session.DESCRIPTION,
-        size=13,
+        size=14,
         text_align=TextAlign.CENTER,
         color="#97ab7b",
         opacity=0.0,
@@ -74,11 +79,11 @@ def Home(pg: PageData) -> None:
         content=ft.Stack([
             ft.Column(
                 [
-                    Title,
+                    ft.Container(Title, alignment=alignment.top_center),
                     ft.Container(
                         Description,
                         alignment=alignment.center,
-                        margin=margin.only(top=-250)
+                        margin=margin.only(top=-100)
                     ),
                     ft.Container(
                         ButtonStartSession,

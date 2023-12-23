@@ -6,6 +6,13 @@ from layout import session
 from db import connect, cursor
 
 def PageSession(pg: PageData):
+    def PageEventResize(e: ControlEvent):
+        if e.data == "resized" or "enterFullScreen" or "leaveFullScreen":
+            _mainContainer.width = pg.page.window_width
+            _mainContainer.height = pg.page.window_height
+            pg.page.update()
+
+    pg.page.on_window_event = PageEventResize
 
     # PAGE FUNCTIONS
     def REQUEST(e) -> None:
@@ -70,8 +77,6 @@ def PageSession(pg: PageData):
     def confirmСlrHistory(e):
         TextField.value = ''
         TextField.update()
-        cursor.execute("UPDATE sessions SET history = ? WHERE id = ?", ("История удалена.", session.USER_SESSION_ID))
-        connect.commit()
         session.CLEAR_HISTORY = True
         session.HISTORY = session.HISTORY[:1]
         clearHistoryConfirmation.open = False
@@ -80,12 +85,6 @@ def PageSession(pg: PageData):
     def cancelСlrHistory(e):
         pg.page.dialog = clearHistoryConfirmation
         clearHistoryConfirmation.open = False
-        pg.page.update()
-
-    # DIALOGS - BUG REPORT
-    def bugReport(e):
-        pg.page.dialog = bugReportDialog
-        bugReportDialog.open = True
         pg.page.update()
 
     # DIALOGS - INFO APP
@@ -115,13 +114,6 @@ def PageSession(pg: PageData):
         ]
     )
 
-
-    bugReportDialog = ft.AlertDialog(
-        title=ft.Text("Нашли ошибку?"),
-        content=ft.Text("Если вы обнаружили ошибки/баги/недоработки \nили сбои во время работы приложения \nОтправте нам сообщение")
-
-    )
-
     InfoApplication = ft.AlertDialog(
         title=ft.Text("Информация о приложении"),
         content=ft.Text(session.TEXT_INFO)
@@ -130,7 +122,7 @@ def PageSession(pg: PageData):
     # OTHER WIDGETS IN PAGE
     TextField = ft.TextField(
         multiline=True,
-        width=550, min_lines=19, max_lines=19,
+        width=700, min_lines=19, max_lines=19,
         read_only=True,
         text_style=ft.TextStyle(shadow=ft.BoxShadow(
                                 spread_radius=1,
@@ -140,7 +132,7 @@ def PageSession(pg: PageData):
                                 blur_style=ft.ShadowBlurStyle.SOLID))
     )
     TextFieldforWrite = ft.TextField(
-        width=550,
+        width=700,
         max_lines=1,
         on_change=ChangeTextField,
         on_submit=REQUEST,
@@ -183,7 +175,6 @@ def PageSession(pg: PageData):
         content=ft.Stack([
             ft.Row([
                 ft.IconButton(icons.INFO_OUTLINE, icon_size=35, on_click=infoApp),
-                ft.IconButton(icons.BUG_REPORT_OUTLINED, icon_size=35, on_click=bugReport),
             ], spacing=0),
             ft.Column(
                 [

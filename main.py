@@ -42,11 +42,9 @@ def loggout() -> None:
 loggout()
 
 def main(page: Page) -> None:
+
+    # Настройка окна
     page.title = "Нейропсихолог"
-    page.window_width = 650
-    page.window_height = 1000
-    page.window_resizable = False
-    page.window_maximizable = False
     page.theme_mode = ThemeMode.DARK
     page.bgcolor = '#222331'
     page.fonts = {
