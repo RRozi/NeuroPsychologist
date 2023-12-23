@@ -28,11 +28,13 @@ def PageSession(pg: PageData):
             TextFieldforWrite.update()
             ChangeTextField()
 
+            ProgressBar.visible = True
             TextField.value += f"{buffer}\n\n"
             pg.page.update()
 
             TextField.value += f"Нᴇйᴩоᴨᴄихоᴧоᴦ: {request_(buffer)}\n\n"
             TextFieldforWrite.disabled = False
+            ProgressBar.visible = False
             pg.page.update()
 
     # DIALOGS - LEAVE
@@ -119,6 +121,13 @@ def PageSession(pg: PageData):
         content=ft.Text(session.TEXT_INFO)
     )
 
+    ProgressBar = ft.ProgressBar(
+        width=695,
+        color=colors.LIGHT_GREEN_300,
+        bgcolor="#eeeeee",
+        visible=False
+    )
+
     # OTHER WIDGETS IN PAGE
     TextField = ft.TextField(
         multiline=True,
@@ -178,7 +187,7 @@ def PageSession(pg: PageData):
             ], spacing=0),
             ft.Column(
                 [
-                    ft.Container(ft.Column([TextField, ft.Row([TextFieldforWrite, SendMessage], alignment=MainAxisAlignment.CENTER)], horizontal_alignment=CrossAxisAlignment.CENTER), alignment=alignment.center),
+                    ft.Container(ft.Column([ProgressBar, TextField, ft.Row([TextFieldforWrite, SendMessage], alignment=MainAxisAlignment.CENTER)], horizontal_alignment=CrossAxisAlignment.CENTER), alignment=alignment.center),
                     ft.Container(ft.Row([ButtonLeave, ButtonClearHistory], alignment=MainAxisAlignment.CENTER), alignment=alignment.center_right)
                 ],
                 alignment=MainAxisAlignment.CENTER

@@ -65,4 +65,5 @@ class Session:
         self.HISTORY = self.HISTORY[:1]
         self.HISTORY_DATEBAS = self.HISTORY_DATEBASE = []
 
+
 session = Session()
