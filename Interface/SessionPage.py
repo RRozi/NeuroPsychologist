@@ -29,10 +29,34 @@ def PageSession(pg: PageData):
             ChangeTextField()
 
             ProgressBar.visible = True
-            TextField.value += f"{buffer}\n\n"
+            TextField.controls.append(ft.Text(
+                text_align=TextAlign.RIGHT,
+                size=16,
+                spans=[ft.TextSpan(
+                    buffer + "\n\n",
+                    ft.TextStyle(shadow=ft.BoxShadow(
+                        spread_radius=1,
+                        blur_radius=12,
+                        color="#451865",
+                        offset=ft.Offset(1, 8),
+                        blur_style=ft.ShadowBlurStyle.SOLID))
+                )]
+            ))
             pg.page.update()
 
-            TextField.value += f"Нᴇйᴩоᴨᴄихоᴧоᴦ: {request_(buffer)}\n\n"
+            TextField.controls.append(ft.Text(
+                text_align=TextAlign.LEFT,
+                size=16,
+                spans=[ft.TextSpan(
+                    "Нᴇйᴩоᴨᴄихоᴧоᴦ: " + request_(buffer) + "\n\n",
+                    ft.TextStyle(shadow=ft.BoxShadow(
+                        spread_radius=1,
+                        blur_radius=16,
+                        color="#240623",
+                        offset=ft.Offset(1, 8),
+                        blur_style=ft.ShadowBlurStyle.SOLID))
+                )]
+            ))
             TextFieldforWrite.disabled = False
             ProgressBar.visible = False
             pg.page.update()
@@ -96,6 +120,7 @@ def PageSession(pg: PageData):
         pg.page.update()
 
     # PAGE DIALOUGUES
+    # Диалог потвержлдения выхода с сессии
     exitConfirmation = ft.AlertDialog(
         title=ft.Text("Вы уверены?"),
         content=ft.Text("После выхода вся история общения будет удалена!"),
@@ -106,6 +131,7 @@ def PageSession(pg: PageData):
         ]
     )
 
+    # Диалог удаления истории
     clearHistoryConfirmation = ft.AlertDialog(
         title=ft.Text("Вы уверены?"),
         content=ft.Text("После очистки бот забудет всю историюю переписки!"),
@@ -116,11 +142,13 @@ def PageSession(pg: PageData):
         ]
     )
 
+    # Диалог - инфо приложения
     InfoApplication = ft.AlertDialog(
         title=ft.Text("Информация о приложении"),
         content=ft.Text(session.TEXT_INFO)
     )
 
+    # ПрогрессБар во время запроса к GPT
     ProgressBar = ft.ProgressBar(
         width=695,
         color=colors.LIGHT_GREEN_300,
@@ -129,17 +157,17 @@ def PageSession(pg: PageData):
     )
 
     # OTHER WIDGETS IN PAGE
-    TextField = ft.TextField(
-        multiline=True,
-        width=700, min_lines=19, max_lines=19,
-        read_only=True,
-        text_style=ft.TextStyle(shadow=ft.BoxShadow(
-                                spread_radius=1,
-                                blur_radius=16,
-                                color="#240623",
-                                offset=ft.Offset(1, 8),
-                                blur_style=ft.ShadowBlurStyle.SOLID))
+    # Поле для отображения диалога
+    TextField = ft.ListView(
+        auto_scroll=True,
+        width=700,
+        expand=1,
+        spacing=10,
+        padding=10
     )
+
+
+    # Поле ввода для работы с GPT
     TextFieldforWrite = ft.TextField(
         width=700,
         max_lines=1,
@@ -149,6 +177,7 @@ def PageSession(pg: PageData):
     )
     TextFieldforWrite.width -= 50
 
+    # Кнопка отправка сообщения
     SendMessage = ft.IconButton(
         icons.SEND_ROUNDED,
         disabled=True,
@@ -156,6 +185,7 @@ def PageSession(pg: PageData):
 
     )
 
+    # Кнопка выхода с сессии
     ButtonLeave = ft.ElevatedButton(
         "Завершить сесcию",
         style=ButtonStyle(shape=ft.RoundedRectangleBorder(radius=4)),
@@ -164,6 +194,7 @@ def PageSession(pg: PageData):
         on_click=Leave
     )
 
+    # Кнопка удаления истории
     ButtonClearHistory = ft.ElevatedButton(
         "Очистить историю",
         style=ButtonStyle(shape=ft.RoundedRectangleBorder(radius=4)),
@@ -172,6 +203,7 @@ def PageSession(pg: PageData):
         on_click=clearHistory
     )
 
+    # ОСНОВНОЙ КОНТЕНЕР СО ВСЕМИ ВИДЖЕТАМИ
     _mainContainer = ft.Container(
         gradient=ft.RadialGradient(
             center=Alignment(0.6, -1.25),
@@ -187,8 +219,26 @@ def PageSession(pg: PageData):
             ], spacing=0),
             ft.Column(
                 [
-                    ft.Container(ft.Column([ProgressBar, TextField, ft.Row([TextFieldforWrite, SendMessage], alignment=MainAxisAlignment.CENTER)], horizontal_alignment=CrossAxisAlignment.CENTER), alignment=alignment.center),
-                    ft.Container(ft.Row([ButtonLeave, ButtonClearHistory], alignment=MainAxisAlignment.CENTER), alignment=alignment.center_right)
+                    ft.Container(
+                        ft.Column([
+                            ProgressBar,
+                            ft.Container(
+                                TextField,
+                                border=border.all(0.7, "#000000"), height=500, border_radius=3
+                            ),
+                            ft.Row([
+                                TextFieldforWrite,
+                                SendMessage
+                            ], alignment=MainAxisAlignment.CENTER)
+                        ], horizontal_alignment=CrossAxisAlignment.CENTER),
+                        alignment=alignment.center),
+
+                    ft.Container(
+                        ft.Row([
+                            ButtonLeave,
+                            ButtonClearHistory
+                        ], alignment=MainAxisAlignment.CENTER),
+                        alignment=alignment.center_right)
                 ],
                 alignment=MainAxisAlignment.CENTER
             )

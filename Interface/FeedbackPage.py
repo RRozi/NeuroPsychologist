@@ -73,6 +73,7 @@ def PageFeedBack(pg: PageData):
         ft.IconButton(icons.SENTIMENT_DISSATISFIED,
                       icon_color="#F15B3C",
                       icon_size=46,
+
                       on_click=lambda e: selectedScore(e, "Плохо, ")),
 
         ft.IconButton(icons.SENTIMENT_NEUTRAL,
@@ -120,16 +121,15 @@ def PageFeedBack(pg: PageData):
                     ft.Container(
                         scoreIcon,
                         alignment=alignment.center,
-                        margin=margin.only(top=55)
+                        margin=margin.only(top=30)
                     ),
                     ft.Container(
                         feedBackMessage,
                         alignment=alignment.center
                     ),
                     ft.Container(
-                        buttonConfirm,
+                        ft.Column([buttonConfirm]),
                         alignment=alignment.bottom_center,
-                        margin=margin.only(top=10)
                     )
                 ],
                 alignment=MainAxisAlignment.CENTER
