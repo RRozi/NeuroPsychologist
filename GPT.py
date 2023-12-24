@@ -54,9 +54,10 @@ def add_History(role: str, content: str) -> None:
 
 def request_(UserPromt: str, time_out = 1) -> str:
     try:
+
         add_History("user", UserPromt)  # Запись ответа ПОЛЬЗОВАТЕЛЯ в ИСТОРИЮ
         request = shuttle.chat_completion(
-            model="gpt-4",
+            model="gpt-3.5-turbo",
             messages=session.HISTORY,
             stream=False,
         )['choices'][0]['message']['content']
@@ -73,7 +74,8 @@ def request_(UserPromt: str, time_out = 1) -> str:
             connect.commit()
             session.USER_SESSION_ID = cursor.lastrowid
         LogInExls(idCol=2, value=session.HISTORY_DATEBASE)
-    except TypeError as e:
+
+    except KeyError as e:
         print(e)
         logging.error(f"Ошибка при попытке ответить на вопрос! \n Сессия ---> {session.HISTORY}")
         time.sleep(time_out)
