@@ -1,27 +1,30 @@
+
 from flet import *
 import flet as ft
-from flet_navigator import PageData
-from layout import session
-
+from time import sleep
 import threading
-import time
+from playsound import playsound
+from params import session
 
-def Home(pg: PageData) -> None:
+
+def Home(page: Page):
     def PageEventResize(e: ControlEvent):
         if e.data == "resized" or "enterFullScreen" or "leaveFullScreen":
-            _mainContainer.width = pg.page.window_width
-            _mainContainer.height = pg.page.window_height
-            pg.page.update()
+            _mainContainer.width = page.window_width
+            _mainContainer.height = page.window_height
+            page.update()
+    page.on_window_event = PageEventResize
 
-    pg.page.bgcolor = '#222331'
-    pg.page.on_window_event = PageEventResize
-    pg.page.update()
     def animate() -> None:
-        time.sleep(0.2)
-        Title.opacity = 1.0
-        #Title.offset = (0.07, -2.3)
-        Description.opacity = 1.0
-        pg.page.update()
+        sleep(0.1)
+        Title.opacity = 1
+        Description.opacity = 1
+        page.update()
+
+    def TermsUser(e):
+        page.dialog = TermsUserINFO
+        TermsUserINFO.open = True
+        page.update()
 
     Title = ft.Text(
         size=72,
@@ -57,6 +60,34 @@ def Home(pg: PageData) -> None:
 
     )
 
+    TermsUserINFO = ft.AlertDialog(
+        title=ft.Text("Пользовательское соглашение."),
+        content=ft.Text(session.TERMS_TEXT),
+    )
+
+    TermsUserText = ft.Row([
+        ft.Text("Вы автоматически соглашаетесь с ", size=13),
+        ft.Text(
+            size=13,
+            color="#0186bf",
+            selectable=True,
+            spans=[
+                ft.TextSpan(
+                    "условиями использования",
+                    style=ft.TextStyle(
+                        decoration=ft.TextDecoration.UNDERLINE,
+                        decoration_color="#0186bf",
+                    ),
+                    on_click=TermsUser
+                )
+            ]
+        )
+    ],
+        alignment=MainAxisAlignment.CENTER,
+        spacing=2
+    )
+
+
     ButtonStartSession = ft.ElevatedButton(
         "Запустить сессию",
         style=ButtonStyle(shape=ft.RoundedRectangleBorder(radius=4)),
@@ -64,7 +95,7 @@ def Home(pg: PageData) -> None:
         height=50,
         bgcolor=ft.colors.with_opacity(0.4, "#356e2d"),
         color="#58ab4d",
-        on_click=lambda e: pg.navigator.navigate("session", pg.page)
+        on_click=lambda e: page.go("/session")
     )
 
     _mainContainer = ft.Container(
@@ -73,8 +104,8 @@ def Home(pg: PageData) -> None:
             radius=1.2,
             colors=["#42445f",
                     "#1d1e2a"]),
-        width=pg.page.width,
-        height=pg.page.window_height,
+        width=page.width,
+        height=page.window_height,
         margin=-10,
         content=ft.Stack([
             ft.Column(
@@ -90,13 +121,15 @@ def Home(pg: PageData) -> None:
                         alignment=alignment.bottom_center,
                         margin=margin.only(top=110)
                     ),
+                    ft.Container(
+                        TermsUserText,
+                        alignment=alignment.bottom_center,
+                    ),
                 ],
                 alignment=MainAxisAlignment.CENTER
             )
         ])
     )
-
-    pg.page.add(
-        _mainContainer
-    )
     threading.Thread(target=animate).start()
+
+    return _mainContainer
