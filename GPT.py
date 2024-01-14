@@ -1,11 +1,15 @@
 import json
+import threading
+
 from db import connect, cursor
 import time
 import logging
-from layout import session
+from params import session
 import openpyxl
 from shuttleai import *
 import os
+from gtts import gTTS
+from playsound import playsound
 
 # Suttle
 shuttle = ShuttleClient(api_key=os.getenv("SHUTTLE"))
@@ -57,12 +61,11 @@ def request_(UserPromt: str, time_out = 1) -> str:
 
         add_History("user", UserPromt)  # Запись ответа ПОЛЬЗОВАТЕЛЯ в ИСТОРИЮ
         request = shuttle.chat_completion(
-            model="gpt-3.5-turbo",
+            model=session.GPT_MODEL,
             messages=session.HISTORY,
             stream=False,
         )['choices'][0]['message']['content']
         add_History("assistant", request)  # Запись ответа GPT в ИСТОРИЮ
-
         if session.USER_SESSION_ID:
             cursor.execute("UPDATE sessions SET history = ? WHERE id = ?",
                            (json.dumps(session.HISTORY_DATEBASE, indent=4, ensure_ascii=False), session.USER_SESSION_ID))

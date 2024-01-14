@@ -1,8 +1,7 @@
 from flet import *
 import flet as ft
-from flet_navigator import PageData
 import json
-from layout import session
+from params import session
 from GPT import LogInExls
 from db import connect, cursor
 
@@ -11,15 +10,14 @@ FeedBackDB = [{
     "comment":''
 }]
 
-def PageFeedBack(pg: PageData):
+def PageFeedBack(page: Page):
 
     def PageEventResize(e: ControlEvent):
         if e.data == "resized" or "enterFullScreen" or "leaveFullScreen":
-            _mainContainer.width = pg.page.window_width
-            _mainContainer.height = pg.page.window_height
-            pg.page.update()
-
-    pg.page.on_window_event = PageEventResize
+            _mainContainer.width = page.window_width
+            _mainContainer.height = page.window_height
+            page.update()
+    page.on_window_event = PageEventResize
 
     Title = ft.Text(
         size=65,
@@ -52,7 +50,7 @@ def PageFeedBack(pg: PageData):
         feedBackMessage.value = score
         feedBackMessage.disabled = False
         buttonConfirm.disabled = False
-        pg.page.update()
+        page.update()
         feedBackMessage.focus()
 
     def Completion(e):
@@ -62,7 +60,7 @@ def PageFeedBack(pg: PageData):
         connect.commit()
         LogInExls(idCol=3, value=FeedBackDB)
         session.SessionReset()
-        pg.navigator.navigate_homepage(pg.page)
+        page.go('/')
 
     scoreIcon = ft.Row([
         ft.IconButton(icons.SENTIMENT_DISSATISFIED_SHARP,
@@ -109,8 +107,8 @@ def PageFeedBack(pg: PageData):
             radius=1.2,
             colors=["#42445f",
                     "#1d1e2a"]),
-        width=pg.page.width,
-        height=pg.page.window_height,
+        width=page.width,
+        height=page.window_height,
         margin=-10,
         content=ft.Stack([
             ft.Column(
@@ -137,6 +135,4 @@ def PageFeedBack(pg: PageData):
         ])
     )
 
-    pg.page.add(
-        _mainContainer
-    )
+    return _mainContainer
