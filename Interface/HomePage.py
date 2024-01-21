@@ -3,7 +3,6 @@ from flet import *
 import flet as ft
 from time import sleep
 import threading
-from playsound import playsound
 from params import session
 
 

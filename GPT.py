@@ -1,6 +1,4 @@
 import json
-import threading
-
 from db import connect, cursor
 import time
 import logging
@@ -8,14 +6,15 @@ from params import session
 import openpyxl
 from shuttleai import *
 import os
-from gtts import gTTS
-from playsound import playsound
-
 # Suttle
 shuttle = ShuttleClient(api_key=os.getenv("SHUTTLE"))
 
 # Работа с Exls
-workbook = openpyxl.load_workbook("sessions.xlsx")
+if not os.path.exists("sessions.xlsx"):
+    with open("sessions.xlsx", "a") as f:
+        f.close()
+
+workbook = openpyxl.load_workbook(r"C:\Users\PYTHON\PycharmProjects\NeuroPsychologist\sessions.xlsx")
 sheet = workbook.active
 
 # function write info in history

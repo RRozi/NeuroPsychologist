@@ -32,8 +32,9 @@ def TextToSpeech(text):
     try:
         with open("audio.mp3", "wb") as f:
             f.write(response.content)
+            sleep(0.3)
             f.close()
-            sleep(0.1)
+            sleep(0.2)
             threading.Thread(target=playsound, args=("audio.mp3",)).start()
     except:
         print("Ошибочка :_")

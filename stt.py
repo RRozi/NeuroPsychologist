@@ -1,15 +1,15 @@
 import json, pyaudio
 from params import session
-from vosk import Model, KaldiRecognizer
+import vosk
 
-model = Model(session.VOSK_MODEL)
-rec = KaldiRecognizer(model, 16000)
+model = vosk.Model(session.VOSK_MODEL)
+rec = vosk.KaldiRecognizer(model, 16000)
 p = pyaudio.PyAudio()
 stream = p.open(format=pyaudio.paInt16, channels=1, rate=16000, input=True, frames_per_buffer=8000)
 stream.start_stream()
 
-class SpeechToText:
 
+class SpeechToText:
     MICROPHONE = False
 
     def listen(self):
@@ -22,5 +22,6 @@ class SpeechToText:
 
     def status(self, status):
         self.MICROPHONE = status
+
 
 stt = SpeechToText()

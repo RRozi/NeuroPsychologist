@@ -41,7 +41,7 @@ class Admin:
         )
 
         self.ADMIN_PANEL = ft.AlertDialog(
-            title=ft.Text("Временная панель."),
+            title=ft.Text("Настройки"),
             content=self.BODY
         )
 

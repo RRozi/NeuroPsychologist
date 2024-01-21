@@ -35,6 +35,9 @@ def PageSession(page: Page):
             buffer = TextFieldforWrite.value
             TextFieldforWrite.value = ''
             disableOfWisgets(True)
+            SendMessageVOICE.icon = icons.MIC_ROUNDED
+            SendMessageVOICE.update()
+            stt.status(False)
             ChangeTextField()
             ProgressBar.opacity = 1
             ProgressText.opacity = 1
@@ -113,7 +116,6 @@ def PageSession(page: Page):
             SendMessageVOICE.icon = icons.MIC_ROUNDED
             SendMessageVOICE.update()
             stt.status(False)
-        ...
 
     def SpeechLastMessage(e):
         if path.exists("audio.mp3") == True:
