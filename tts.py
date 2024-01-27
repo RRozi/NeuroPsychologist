@@ -27,14 +27,14 @@ def TextToSpeech(text):
                              headers=headers)
 
     # Save the file
-    if os.path.exists("audio.mp3") == True:
-         os.remove("audio.mp3")
+    if os.path.exists(os.path.join(os.path.dirname(__file__), "audio.mp3")) == True:
+         os.remove(os.path.join(os.path.dirname(__file__), "audio.mp3"))
     try:
-        with open("audio.mp3", "wb") as f:
+        with open(os.path.join(os.path.dirname(__file__), "audio.mp3"), "wb") as f:
             f.write(response.content)
             sleep(0.3)
             f.close()
             sleep(0.2)
-            threading.Thread(target=playsound, args=("audio.mp3",)).start()
+            threading.Thread(target=playsound, args=(os.path.join(os.path.dirname(__file__), "audio.mp3"),)).start()
     except:
         print("Ошибочка :_")

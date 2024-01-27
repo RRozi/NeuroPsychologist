@@ -1,4 +1,7 @@
 import json
+
+import shuttleai
+
 from db import connect, cursor
 import time
 import logging
@@ -11,10 +14,9 @@ shuttle = ShuttleClient(api_key=os.getenv("SHUTTLE"))
 
 # Работа с Exls
 if not os.path.exists("sessions.xlsx"):
-    with open("sessions.xlsx", "a") as f:
-        f.close()
+    openpyxl.Workbook.save("sessions.xlsx")
 
-workbook = openpyxl.load_workbook(r"C:\Users\PYTHON\PycharmProjects\NeuroPsychologist\sessions.xlsx")
+workbook = openpyxl.load_workbook("sessions.xlsx")
 sheet = workbook.active
 
 # function write info in history

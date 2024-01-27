@@ -11,7 +11,7 @@ class Session:
 
     APP_VERSION = '1.2'  # application release version
 
-    VOSK_MODEL = r"C:\Users\PYTHON\PycharmProjects\NeuroPsychologist\vosk_small"  # model folder. vosk_small | vosk_big
+    VOSK_MODEL = r"C:\Users\Admin\Desktop\NeuroPsychologist\vosk_small"  # model folder. vosk_small | vosk_big
 
     GPT_MODEL = "gpt-4"  # gpt-4 | gpt-3.5-turbo (faster)
 

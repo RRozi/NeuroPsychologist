@@ -1,6 +1,7 @@
 from dotenv import load_dotenv
 from flet import *
 import flet as ft
+import os
 from params import session
 
 load_dotenv()
@@ -35,7 +36,6 @@ def main(page: Page) -> None:
     page.theme_mode = ThemeMode.DARK
     page.bgcolor = '#222331'
     page.fonts = {
-        "Borsok": "/fonts/Borsok.ttf",
         "Comic": "/fonts/Comic.otf"
     }
 
@@ -45,4 +45,4 @@ def main(page: Page) -> None:
     page.go('/')
 
 if __name__ == '__main__':
-    app(target=main, assets_dir="static")
+    app(target=main, assets_dir=os.path.join(os.path.dirname(__file__), "static"))
