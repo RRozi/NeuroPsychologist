@@ -4,7 +4,7 @@ import flet as ft
 import os
 from params import session
 
-load_dotenv()
+load_dotenv(os.path.join(os.path.dirname(__file__), ".env"))
 
 from Interface.HomePage import Home
 from Interface.SessionPage import PageSession

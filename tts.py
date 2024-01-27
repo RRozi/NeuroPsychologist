@@ -7,14 +7,9 @@ import os
 
 
 def TextToSpeech(text):
-    # if os.path.exists("text.mp3") == True:
-    #     os.remove("text.mp3")
-    #
-    # audio = gTTS(text=text, lang='ru', slow=False)
-    # audio.save("text.mp3")
-    # playsound("text.mp3")
+    api = os.getenv("MANDRILL")
     headers = {
-        'Authorization': 'Bearer md-uTMcROuPbsFXnSVkpTmbaYGxatGhjVPJixKlGIuCoPJjYZbE'
+        'Authorization': f'Bearer {api}'
     }
 
     data = {

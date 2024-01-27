@@ -14,7 +14,8 @@ shuttle = ShuttleClient(api_key=os.getenv("SHUTTLE"))
 
 # Работа с Exls
 if not os.path.exists("sessions.xlsx"):
-    openpyxl.Workbook.save("sessions.xlsx")
+    wb = openpyxl.Workbook()
+    wb.save("sessions.xlsx")
 
 workbook = openpyxl.load_workbook("sessions.xlsx")
 sheet = workbook.active
