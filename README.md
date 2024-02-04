@@ -1,4 +1,4 @@
-![image](https://github.com/RRozi/NeuroPsychologist/assets/111123403/2f9b24f7-43f4-411d-9a5f-d5c21eab8215)<h1 align="center"> 
+<h1 align="center"> 
   Нейропсихолог - твой личный психолог 🔮
 </h1>
 
