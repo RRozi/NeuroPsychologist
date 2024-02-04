@@ -14,8 +14,7 @@
 2. API
    - В файле `.env` установите API-keys модулей `SHUTTLE` и `MANDRILL`, без `< >`. Получить ключи можно [здесь](#API)
 
-[//]: # (VOSK)
-<a name="vvosk"></a>
+<a name="название_якоря"></a>
 3. VOSK\
    В проекте есть малая модель `vosk`, но для коректной работы большой модели её требуется [установить](https://alphacephei.com/vosk/models/vosk-model-ru-0.10.zip).
    Также можно [установить](https://alphacephei.com/vosk/models) и другие модели похожие модели.
