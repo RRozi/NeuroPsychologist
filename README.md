@@ -1,5 +1,5 @@
 <h1 align="center"> 
-  Нейропсихолог
+  Нейропсихолог - твой личный психолог
 </h1>
 
 
@@ -16,7 +16,7 @@
 
 3. VOSK\
    В проекте есть малая модель `vosk`, но для коректной работы большой модели её требуется [установить](https://alphacephei.com/vosk/models/vosk-model-ru-0.10.zip).
-   Также можно [установить](https://alphacephei.com/vosk/models) и другие модели похожие модели.
+   Также можно [установить](https://alphacephei.com/vosk/models) и другие похожие модели.
 
 ### API
 - ShuttleAI
