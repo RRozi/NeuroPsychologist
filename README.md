@@ -60,7 +60,7 @@ ___
 | ![image](https://github.com/RRozi/NeuroPsychologist/assets/111123403/54ba4ea3-48e1-4bd1-a4ae-13cd9eee7817) | ![image](https://github.com/RRozi/NeuroPsychologist/assets/111123403/486cac19-f859-4621-8c3f-d65756f7c82a) | ![image](https://github.com/RRozi/NeuroPsychologist/assets/111123403/21ea57f2-5de0-40cb-9a43-9bcd0bc3b468) |
 |:--------------------------:|:--------------------------:|:--------------------------:|
 |     Домашняя страница     |      Основная страница    |      Оценка по завершению    |
-##### Пример [озвучки](https://drive.google.com/file/d/1HvA810jcJnC3Tf7ikf-NGe4NhGl-icE_/view?usp=sharing) с скриншота `Основной страницы`
+##### Пример [озвучки](https://drive.google.com/file/d/1XSQzNvVW3tnLxR0K5dsifTsIvFLLAlMF/view?usp=sharing) с скриншота `Основной страницы`
 > [!CAUTION]
 > Обратите внимание! На данный момент могут возникнуть проблемы при озвучке **большого текста**, ответа от бота
 
