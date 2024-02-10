@@ -57,8 +57,8 @@ python3.10 main.py
 ```
 ___
 # Предпросмотр
-| ![image](https://github.com/RRozi/NeuroPsychologist/assets/111123403/586b4102-a148-406e-83f5-a2b8f16c2dab) | ![image](https://github.com/RRozi/NeuroPsychologist/assets/111123403/ffe2588b-7769-44f4-8eaf-41ebda3ff0d3) | ![image](https://github.com/RRozi/NeuroPsychologist/assets/111123403/2666481a-3f1f-4fc1-a767-700ce1b72520)|
-|:--------------------------:|:--------------------------:|:--------------------------:
+| ![image](https://github.com/RRozi/NeuroPsychologist/assets/111123403/54ba4ea3-48e1-4bd1-a4ae-13cd9eee7817) | ![image](https://github.com/RRozi/NeuroPsychologist/assets/111123403/486cac19-f859-4621-8c3f-d65756f7c82a) | ![image](https://github.com/RRozi/NeuroPsychologist/assets/111123403/21ea57f2-5de0-40cb-9a43-9bcd0bc3b468) |
+|:--------------------------:|:--------------------------:|:--------------------------:|
 |     Домашняя страница     |      Основная страница    |      Оценка по завершению    |
 ##### Пример [озвучки](https://drive.google.com/file/d/1HvA810jcJnC3Tf7ikf-NGe4NhGl-icE_/view?usp=sharing) с скриншота `Основной страницы`
 > [!CAUTION]
