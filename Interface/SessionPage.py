@@ -2,26 +2,30 @@ from flet import *
 import flet as ft
 from GPT import request_
 from params import session
-from tts import TextToSpeech
+from tts import text_to_speech
 from os import path, remove
 from playsound import playsound
+import os
 from stt import stt
 from Interface.admin_panel import admin
 
+
 def PageSession(page: Page):
-    def PageEventResize(e: ControlEvent):
+    def page_event_resize(e: ControlEvent):
         if e.data == "resized" or "enterFullScreen" or "leaveFullScreen":
             _mainContainer.width = page.window_width
             _mainContainer.height = page.window_height
             page.update()
-    page.on_window_event = PageEventResize
 
-    def disableOfWisgets(disable: bool) -> None:
-        widgets = [Butt_SpeechLastMessage, Butt_MuteSpeech, TextFieldforWrite, SendMessage, SendMessageVOICE, ButtonClearHistory]
+    page.on_window_event = page_event_resize
+
+    def disable_of_wisgets(disable: bool) -> None:
+        widgets = [butt_speech_last_message, butt_mute_speech, text_field_for_write, send_message, send_message_voice,
+                   button_clear_history]
         for widget in widgets:
             widget.disabled = disable
         if not disable:
-            Butt_SpeechLastMessage.disabled = not session.VOICE_ACTIVE
+            butt_speech_last_message.disabled = not session.VOICE_ACTIVE
         page.update()
 
     # PAGE FUNCTIONS
@@ -31,153 +35,159 @@ def PageSession(page: Page):
         Связь GUI и модуля работы с OpenAI
         REQUEST(e) ---> request_() ---> GPT
         """
-        if TextFieldforWrite.value.strip():
-            buffer = TextFieldforWrite.value
-            TextFieldforWrite.value = ''
-            disableOfWisgets(True)
-            SendMessageVOICE.icon = icons.MIC_ROUNDED
-            SendMessageVOICE.update()
+        if text_field_for_write.value.strip():
+            buffer = text_field_for_write.value
+            text_field_for_write.value = ''
+            disable_of_wisgets(True)
+            send_message_voice.icon = icons.MIC_ROUNDED
+            send_message_voice.update()
             stt.status(False)
             ChangeTextField()
-            ProgressBar.opacity = 1
-            ProgressText.opacity = 1
+            info_progress_bar.opacity = 1
+            progress_text.opacity = 1
             page.update()
 
             # Добавляем сообщение от пользователя в блок чата
-            TextField.controls.append(
-                ft.Text(
-                    text_align=TextAlign.RIGHT,
-                    size=16,
-                    spans=[
-                        ft.TextSpan(
-                            '\n' + buffer + '\n',
-                            ft.TextStyle(
-                                shadow=ft.BoxShadow(
-                                    spread_radius=1,
-                                    blur_radius=12,
-                                    color="#451865",
-                                    offset=ft.Offset(1, 8),
-                                    blur_style=ft.ShadowBlurStyle.SOLID)
+            chat_text_field.controls.append(
+                    ft.Text(
+                        text_align=TextAlign.RIGHT,
+                        size=16,
+                        selectable=True,
+                        spans=[
+                            ft.TextSpan(
+                                '\n' + buffer + '\n',
+                                ft.TextStyle(
+                                    shadow=ft.BoxShadow(
+                                        spread_radius=1,
+                                        blur_radius=12,
+                                        color="#451865",
+                                        offset=ft.Offset(1, 8),
+                                        blur_style=ft.ShadowBlurStyle.SOLID)
+                                )
                             )
-                        )
-                    ]
-                )
+                        ]
+                    )
             )
-            ProgressText.value = 'Обработка запроса...'
+            progress_text.value = 'Обработка запроса...'
             page.update()
 
             # Добавляем сообщение от БОТА в блок чата
-            RequestText = request_(buffer)
-            TextField.controls.append(
-                ft.Text(
-                    text_align=TextAlign.LEFT,
-                    size=16,
-                    spans=[
-                        ft.TextSpan(
-                            "Нᴇйᴩоᴨᴄихоᴧоᴦ: " + RequestText,
-                            ft.TextStyle(shadow=ft.BoxShadow(
-                                spread_radius=1,
-                                blur_radius=16,
-                                color="#240623",
-                                offset=ft.Offset(1, 8),
-                                blur_style=ft.ShadowBlurStyle.SOLID))
-                        )
-                    ]
-                )
+            request_text = request_(buffer)
+            chat_text_field.controls.append(
+                ft.Row([
+                    ft.Text(
+                        text_align=TextAlign.LEFT,
+                        width=400,
+                        selectable=True,
+                        size=16,
+                        spans=[
+                            ft.TextSpan(
+                                "Киберпсихолог: " + request_text,
+                                ft.TextStyle(
+                                    color=ft.colors.LIGHT_GREEN_300,
+                                    shadow=ft.BoxShadow(
+                                        spread_radius=1,
+                                        blur_radius=16,
+                                        color="#240623",
+                                        offset=ft.Offset(1, 8),
+                                        blur_style=ft.ShadowBlurStyle.SOLID))
+                            )
+                        ]
+                    )
+                ])
             )
 
             if session.VOICE_ACTIVE:
-                ProgressText.value = 'Озвучка текста...'
-                ProgressText.update()
-                TextToSpeech(RequestText)
-            disableOfWisgets(False)
+                progress_text.value = 'Озвучка текста...'
+                progress_text.update()
+                text_to_speech(request_text)
+            disable_of_wisgets(False)
             ChangeTextField()
-            ProgressBar.opacity = 0
-            ProgressText.opacity = 0
+            info_progress_bar.opacity = 0
+            progress_text.opacity = 0
             page.update()
 
     def voice_change(e):
         session.VOICE_ACTIVE = not session.VOICE_ACTIVE
-        Butt_SpeechLastMessage.disabled = not session.VOICE_ACTIVE
+        butt_speech_last_message.disabled = not session.VOICE_ACTIVE
         e.control.selected = not e.control.selected
         page.update()
         playsound("static/sounds/tts.mp3")
 
     def SendInVOICE(e):
         if not stt.MICROPHONE:
-            SendMessageVOICE.icon = icons.CANCEL_OUTLINED
-            SendMessageVOICE.update()
+            send_message_voice.icon = icons.CANCEL_OUTLINED
+            send_message_voice.update()
             stt.status(True)
             for words in stt.listen():
-                TextFieldforWrite.value += f"{words} "
-                TextFieldforWrite.update()
+                text_field_for_write.value += f"{words} "
+                text_field_for_write.update()
                 ChangeTextField()
         else:
-            SendMessageVOICE.icon = icons.MIC_ROUNDED
-            SendMessageVOICE.update()
+            send_message_voice.icon = icons.MIC_ROUNDED
+            send_message_voice.update()
             stt.status(False)
 
     def SpeechLastMessage(e):
-        if path.exists("audio.mp3") == True:
-            disableOfWisgets(True)
+        if path.exists(session.AUDIO_PATH):
+            disable_of_wisgets(True)
             try:
-                playsound("audio.mp3")
+                playsound(session.AUDIO_PATH)
             except:
                 print("Ошибочка :_")
-            disableOfWisgets(False)
+            disable_of_wisgets(False)
 
     def ChangeTextField(e=None) -> None:
-        if TextFieldforWrite.value.strip():
-            SendMessage.disabled = False
+        if text_field_for_write.value.strip():
+            send_message.disabled = False
         else:
-            SendMessage.disabled = True
-        SendMessage.update()
-
+            send_message.disabled = True
+        send_message.update()
 
     # DIALOGS - LEAVE
     def Leave(e) -> None:
-        if session.HISTORY[1:] == [] and session.CLEAR_HISTORY == False:
+        if session.HISTORY[1:] == [] and session.CLEAR_HISTORY:
             page.go('/')
         else:
-            page.dialog = exitConfirmation
-            exitConfirmation.open = True
+            page.dialog = exit_confirmation
+            exit_confirmation.open = True
             page.update()
 
     def selectLeave(e, options) -> None:
-        exitConfirmation.open = False
+        exit_confirmation.open = False
         page.update()
         if options:
-            if path.exists("audio.mp3") == True:
-                remove("audio.mp3")
+            if path.exists(session.AUDIO_PATH):
+                remove(session.AUDIO_PATH)
             page.go('/feedback')
 
     # DIALOGS - CLEAR HISTORY
-    def clearHistory(e):
-        if session.HISTORY[1:] == []:
+    def clear_history(e):
+        if not session.HISTORY[1:]:
             pass
         else:
-            page.dialog = clearHistoryConfirmation
-            clearHistoryConfirmation.open = True
+            page.dialog = clear_history_confirmation
+            clear_history_confirmation.open = True
             page.update()
 
-    def SelectClearHistory(e, otions):
-        clearHistoryConfirmation.open = False
+    def select_clear_history(e, otions):
+        clear_history_confirmation.open = False
         page.update()
         if otions:
-            TextField.controls.clear()
-            TextField.update()
+            chat_text_field.controls.clear()
+            chat_text_field.update()
             session.CLEAR_HISTORY = True
             session.HISTORY = session.HISTORY[:1]
 
     # DIALOGS - APP
-    def adminDialog(e):
+    def admin_dialog(e):
         page.dialog = admin.ADMIN_PANEL
         admin.ADMIN_PANEL.open = True
         page.update()
 
     # PAGE DIALOUGUES
     # Диалог потвержлдения выхода с сессии
-    exitConfirmation = ft.AlertDialog(
+    exit_confirmation = ft.AlertDialog(
         title=ft.Text("Вы уверены?"),
         content=ft.Text("После выхода вся история общения будет удалена!"),
         actions=[
@@ -187,42 +197,36 @@ def PageSession(page: Page):
     )
 
     # Диалог удаления истории
-    clearHistoryConfirmation = ft.AlertDialog(
+    clear_history_confirmation = ft.AlertDialog(
         title=ft.Text("Вы уверены?"),
         content=ft.Text("После очистки бот забудет всю историюю переписки!"),
         actions=[
-            ft.TextButton("Да, очистить.", on_click=lambda e: SelectClearHistory(e, True)),
-            ft.TextButton("Отмена.", on_click=lambda e: SelectClearHistory(e, False))
+            ft.TextButton("Да, очистить.", on_click=lambda e: select_clear_history(e, True)),
+            ft.TextButton("Отмена.", on_click=lambda e: select_clear_history(e, False))
         ]
     )
 
-    # Диалог - инфо приложения
-    InfoApplication = ft.AlertDialog(
-        title=ft.Text("Информация о приложении"),
-        content=ft.Text(session.TEXT_INFO)
-    )
-
     # ПрогрессБар во время запроса к GPT
-    ProgressBar = ft.ProgressBar(
+    info_progress_bar = ft.ProgressBar(
         width=550,
         color=colors.LIGHT_GREEN_300,
         bgcolor="#eeeeee",
         opacity=0
     )
-    ProgressText = ft.Text(
+    progress_text = ft.Text(
         'Отправка запроса...',
         opacity=0
     )
 
     # OTHER WIDGETS IN PAGE
     # Кнопка воспроизведения последнего сообщения
-    Butt_SpeechLastMessage = ft.IconButton(
+    butt_speech_last_message = ft.IconButton(
         icon=icons.PLAY_CIRCLE_OUTLINE_SHARP,
         tooltip="Озвучить последнее сообщение",
         on_click=SpeechLastMessage
     )
 
-    Butt_MuteSpeech = ft.IconButton(
+    butt_mute_speech = ft.IconButton(
         icon=icons.VOLUME_UP_OUTLINED,
         selected_icon=icons.VOLUME_OFF_OUTLINED,
         style=ButtonStyle(elevation=3),
@@ -231,39 +235,39 @@ def PageSession(page: Page):
     )
 
     # Поле для отображения диалога
-    TextField = ft.ListView(
+    chat_text_field = ft.ListView(
         auto_scroll=True,
-        width=700,
-        expand=1,
+        expand=False,
+        width=800,
         spacing=10,
         padding=10
     )
 
     # Поле ввода для работы с GPT
-    TextFieldforWrite = ft.TextField(
-        width=700,
+    text_field_for_write = ft.TextField(
+        width=800,
         max_lines=1,
         on_change=ChangeTextField,
         on_submit=REQUEST,
         label="Введите сообщение..."
     )
-    TextFieldforWrite.width -= 100
+    text_field_for_write.width -= 100
 
     # Кнопка отправка сообщения
-    SendMessage = ft.IconButton(
+    send_message = ft.IconButton(
         icons.SEND_ROUNDED,
         disabled=True,
         on_click=REQUEST
     )
 
     # Кнопка голосовго вввода
-    SendMessageVOICE = ft.IconButton(
+    send_message_voice = ft.IconButton(
         icons.MIC_ROUNDED,
         on_click=SendInVOICE
     )
 
     # Кнопка выхода с сессии
-    ButtonLeave = ft.ElevatedButton(
+    button_leave = ft.ElevatedButton(
         "Завершить сесcию",
         style=ButtonStyle(shape=ft.RoundedRectangleBorder(radius=4)),
         bgcolor=ft.colors.with_opacity(0.6, '#8c2727'),
@@ -272,12 +276,12 @@ def PageSession(page: Page):
     )
 
     # Кнопка удаления истории
-    ButtonClearHistory = ft.ElevatedButton(
+    button_clear_history = ft.ElevatedButton(
         "Очистить историю",
         style=ButtonStyle(shape=ft.RoundedRectangleBorder(radius=4)),
         bgcolor=ft.colors.with_opacity(0.6, '#8c2727'),
         color="#ed5f4a",
-        on_click=clearHistory
+        on_click=clear_history
     )
 
     # ОСНОВНОЙ КОНТЕНЕР СО ВСЕМИ ВИДЖЕТАМИ
@@ -291,37 +295,37 @@ def PageSession(page: Page):
         height=page.window_height,
         margin=-10,
         content=ft.Stack([
-            ft.Row([
-                ft.IconButton(icons.SETTINGS_OUTLINED, icon_size=35, on_click=adminDialog),
-            ], spacing=0),
             ft.Column([
-                    ft.Container(
-                        ft.Column([
-                            ft.Container(ft.Row([ProgressBar, ProgressText]), width=700, alignment=alignment.center),
-                            ft.Container(
-                                TextField,
-                                border=border.all(0.7, "#000000"), height=510, border_radius=3
-                            ),
+                ft.Container(
+                    ft.Column([
+                        ft.Container(ft.Row([info_progress_bar, progress_text]), width=800, alignment=alignment.center),
+                        ft.Container(
+                            chat_text_field,
+                            border=border.all(0.7, "#000000"), height=550, border_radius=3
+                        ),
+                        ft.Row([
+                            text_field_for_write,
+                            send_message,
+                            send_message_voice
+                        ], alignment=MainAxisAlignment.CENTER),
+                        ft.Container(
                             ft.Row([
-                                TextFieldforWrite,
-                                SendMessage,
-                                SendMessageVOICE
-                            ], alignment=MainAxisAlignment.CENTER),
-                            ft.Container(
-                                ft.Row([
-                                    ButtonLeave,
-                                    ButtonClearHistory,
-                                    Butt_SpeechLastMessage,
-                                    Butt_MuteSpeech
-                                ]),
-                                width=700, alignment=alignment.center, margin=margin.only(bottom=13)
-                            )  # Block CONTAINER
+                                button_leave,
+                                button_clear_history,
+                                butt_speech_last_message,
+                                butt_mute_speech
+                            ]),
+                            width=800, alignment=alignment.center, margin=margin.only(bottom=13)
+                        )  # Block CONTAINER
 
-                        ], horizontal_alignment=CrossAxisAlignment.CENTER),  # Block COLUMN (end)
-                        alignment=alignment.center,
-                        margin=margin.only(top=-20)),  # Block CONTAINER
+                    ], horizontal_alignment=CrossAxisAlignment.CENTER),  # Block COLUMN (end)
+                    alignment=alignment.center,
+                    margin=margin.only(top=-20)),  # Block CONTAINER
 
             ], alignment=MainAxisAlignment.CENTER),  # Main block COLUMN
+            ft.Row([
+                ft.Container(ft.IconButton(icons.SETTINGS_OUTLINED, icon_size=35, on_click=admin_dialog)),
+            ], spacing=10),
         ])
     )
 

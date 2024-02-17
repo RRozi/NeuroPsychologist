@@ -1,14 +1,11 @@
-from dotenv import load_dotenv
 from flet import *
 import flet as ft
 import os
-from params import session
-
-load_dotenv(os.path.join(os.path.dirname(__file__), ".env"))
 
 from Interface.HomePage import Home
 from Interface.SessionPage import PageSession
 from Interface.FeedbackPage import PageFeedBack
+
 
 class Router:
     def __init__(self, page: ft.Page):
@@ -30,10 +27,12 @@ class Router:
         )
         self.page.update()
 
+
 def main(page: Page) -> None:
     # Настройка окна
-    page.title = "Нейропсихолог " + session.APP_VERSION
+    page.title = "Киберпсихолог"
     page.theme_mode = ThemeMode.DARK
+    page.window_height = 800
     page.bgcolor = '#222331'
     page.fonts = {
         "Comic": "/fonts/Comic.otf"
@@ -43,6 +42,7 @@ def main(page: Page) -> None:
     router = Router(page)
     page.on_route_change = router.change_route
     page.go('/')
+
 
 if __name__ == '__main__':
     app(target=main, assets_dir=os.path.join(os.path.dirname(__file__), "static"))

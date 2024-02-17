@@ -1,4 +1,5 @@
-import json, pyaudio
+import json
+import pyaudio
 from params import session
 import vosk
 import os
@@ -6,8 +7,12 @@ import os
 model = vosk.Model(os.path.join(os.path.dirname(__file__), session.VOSK_MODEL))
 rec = vosk.KaldiRecognizer(model, 16000)
 p = pyaudio.PyAudio()
-stream = p.open(format=pyaudio.paInt16, channels=1, rate=16000, input=True, frames_per_buffer=8000)
-stream.start_stream()
+
+try:
+    stream = p.open(format=pyaudio.paInt16, channels=1, rate=16000, input=True, frames_per_buffer=8000)
+    stream.start_stream()
+except:
+    pass
 
 
 class SpeechToText:

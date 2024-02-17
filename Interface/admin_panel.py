@@ -1,14 +1,41 @@
-from flet import *
 import flet as ft
-from params import session
 from vosk import Model
+
+from params import session
+
+
+def change_gpt(e):
+    session.GPT_MODEL = e.control.value
+
+
+def change_vosk(e):
+    session.VOSK_MODEL = e.control.value
+    Model(session.VOSK_MODEL)
+
+
+def change_voice(e):
+    session.VOICE_ID = e.control.value
+    if session.VOICE_ID == "21m00Tcm4TlvDq8ikWAM" or "EXAVITQu4vr4xnSDxMaL":
+        session.HISTORY.append(
+            {
+                "role": "system",
+                "content": "ТЫ ТЕПЕРЬ ЖЕНСОГО ПОЛА"
+            },
+        )
+    elif session.VOICE_ID == "5Q0t7uMcjvnagumLfvZi" or "GBv7mTt0atIp3Br8iCZE":
+        session.HISTORY.append(
+            {
+                "role": "system",
+                "content": "ТЫ ТЕПЕРЬ МУЖСКОГО ПОЛА"
+            },
+        )
 
 class Admin:
     def __init__(self):
         self.BODY = ft.Container(
             ft.Column([
                     ft.RadioGroup(
-                        on_change=self.change_gpt,
+                        on_change=change_gpt,
                         value=session.GPT_MODEL,
                         content=ft.Row([
                             ft.Radio(value="gpt-4", label="GPT-4"),
@@ -17,7 +44,7 @@ class Admin:
                     ),
                     ft.Divider(),
                     ft.RadioGroup(
-                        on_change=self.change_vosk,
+                        on_change=change_vosk,
                         value=session.VOSK_MODEL,
                         content=ft.Row([
                             ft.Radio(value="vosk_small", label="VOSK_SMALL_MODEL"),
@@ -26,7 +53,7 @@ class Admin:
                     ),
                     ft.Divider(),
                     ft.RadioGroup(
-                        on_change=self.change_voice,
+                        on_change=change_voice,
                         value=session.VOICE_ID,
                         content=ft.Row([
                             ft.Radio(value="21m00Tcm4TlvDq8ikWAM", label="Rachel"),
@@ -45,14 +72,5 @@ class Admin:
             content=self.BODY
         )
 
-    def change_gpt(self, e):
-        session.GPT_MODEL = e.control.value
-
-    def change_voice(self, e):
-        session.VOICE_ID = e.control.value
-
-    def change_vosk(self, e):
-        session.VOSK_MODEL = e.control.value
-        Model(session.VOSK_MODEL)
 
 admin = Admin()

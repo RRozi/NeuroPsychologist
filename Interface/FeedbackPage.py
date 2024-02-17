@@ -6,20 +6,21 @@ from GPT import LogInExls
 from db import connect, cursor
 
 FeedBackDB = [{
-    "score":'',
-    "comment":''
+    "score": '',
+    "comment": ''
 }]
 
-def PageFeedBack(page: Page):
 
+def PageFeedBack(page: Page):
     def PageEventResize(e: ControlEvent):
         if e.data == "resized" or "enterFullScreen" or "leaveFullScreen":
             _mainContainer.width = page.window_width
             _mainContainer.height = page.window_height
             page.update()
+
     page.on_window_event = PageEventResize
 
-    Title = ft.Text(
+    title = ft.Text(
         size=65,
         text_align=TextAlign.CENTER,
         font_family="Comic",
@@ -28,17 +29,17 @@ def PageFeedBack(page: Page):
             ft.TextSpan(
                 "Оцените работу",
                 ft.TextStyle(shadow=ft.BoxShadow(
-                                spread_radius=1,
-                                blur_radius=16,
-                                color="#000000",
-                                offset=ft.Offset(1, 10),
-                                blur_style=ft.ShadowBlurStyle.SOLID)
+                    spread_radius=1,
+                    blur_radius=16,
+                    color="#000000",
+                    offset=ft.Offset(1, 10),
+                    blur_style=ft.ShadowBlurStyle.SOLID)
                 )
             )
         ]
     )
 
-    feedBackMessage = ft.TextField(
+    feed_back_message = ft.TextField(
         multiline=True,
         min_lines=12, max_lines=12,
         width=700,
@@ -47,22 +48,22 @@ def PageFeedBack(page: Page):
 
     def selectedScore(e, score: str) -> None:
         FeedBackDB[0]['score'] = score.strip(", ")
-        feedBackMessage.value = score
-        feedBackMessage.disabled = False
-        buttonConfirm.disabled = False
+        feed_back_message.value = score
+        feed_back_message.disabled = False
+        button_confirm.disabled = False
         page.update()
-        feedBackMessage.focus()
+        feed_back_message.focus()
 
     def Completion(e):
-        FeedBackDB[0]['comment'] = feedBackMessage.value
+        FeedBackDB[0]['comment'] = feed_back_message.value
         cursor.execute("UPDATE sessions SET feedback = ? WHERE id = ?",
                        (json.dumps(FeedBackDB, indent=4, ensure_ascii=False), session.USER_SESSION_ID))
         connect.commit()
         LogInExls(idCol=3, value=FeedBackDB)
-        session.SessionReset()
+        session.session_reset()
         page.go('/')
 
-    scoreIcon = ft.Row([
+    score_icon = ft.Row([
         ft.IconButton(icons.SENTIMENT_DISSATISFIED_SHARP,
                       icon_color="#B03319",
                       icon_size=46,
@@ -90,7 +91,7 @@ def PageFeedBack(page: Page):
                       on_click=lambda e: selectedScore(e, "Отлично, "))
     ], alignment=MainAxisAlignment.CENTER)
 
-    buttonConfirm = ft.ElevatedButton(
+    button_confirm = ft.ElevatedButton(
         "Завершить",
         style=ButtonStyle(shape=ft.RoundedRectangleBorder(radius=4)),
         width=350,
@@ -113,20 +114,20 @@ def PageFeedBack(page: Page):
         content=ft.Stack([
             ft.Column(
                 [
-                    ft.Container(Title,
+                    ft.Container(title,
                                  alignment=alignment.top_center,
                                  ),
                     ft.Container(
-                        scoreIcon,
+                        score_icon,
                         alignment=alignment.center,
                         margin=margin.only(top=30)
                     ),
                     ft.Container(
-                        feedBackMessage,
+                        feed_back_message,
                         alignment=alignment.center
                     ),
                     ft.Container(
-                        ft.Column([buttonConfirm]),
+                        ft.Column([button_confirm]),
                         alignment=alignment.bottom_center,
                     )
                 ],

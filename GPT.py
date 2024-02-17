@@ -1,7 +1,4 @@
 import json
-
-import shuttleai
-
 from db import connect, cursor
 import time
 import logging
@@ -9,6 +6,9 @@ from params import session
 import openpyxl
 from shuttleai import *
 import os
+from dotenv import load_dotenv
+load_dotenv(os.path.join(os.path.dirname(__file__), ".env"))
+
 # Suttle
 shuttle = ShuttleClient(api_key=os.getenv("SHUTTLE"))
 
@@ -20,6 +20,7 @@ if not os.path.exists("sessions.xlsx"):
 workbook = openpyxl.load_workbook("sessions.xlsx")
 sheet = workbook.active
 
+
 # function write info in history
 def LogInExls(idCol: int, value: list):
     correct_value = ''
@@ -28,13 +29,13 @@ def LogInExls(idCol: int, value: list):
         for k, v in x.items():
             correct_value += f"{k}: {v}\n"
 
-    if session.EXLS_LAST_ROW_ID == None:
+    if session.EXLS_LAST_ROW_ID is None:
         session.EXLS_LAST_ROW_ID = sheet.max_row + 1
 
         sheet.cell(
             row=session.EXLS_LAST_ROW_ID,
             column=1,
-            value=session.USER_SESSION_ID) # Запись id сессии в активную строку exls сессии
+            value=session.USER_SESSION_ID)  # Запись id сессии в активную строку exls сессии
 
     sheet.cell(
         row=session.EXLS_LAST_ROW_ID,
@@ -44,7 +45,7 @@ def LogInExls(idCol: int, value: list):
     workbook.save("sessions.xlsx")
 
 
-def add_History(role: str, content: str) -> None:
+def add_history(role: str, content: str) -> None:
     session.HISTORY_DATEBASE.append(
         {
             "role": role,
@@ -53,24 +54,27 @@ def add_History(role: str, content: str) -> None:
     )
     session.HISTORY.append(
         {
-            "role":role,
-            "content":content
+            "role": role,
+            "content": content
         }
     )
 
-def request_(UserPromt: str, time_out = 1) -> str:
+
+def request_(UserPromt: str, time_out=1) -> str:
     try:
 
-        add_History("user", UserPromt)  # Запись ответа ПОЛЬЗОВАТЕЛЯ в ИСТОРИЮ
+        add_history("user", UserPromt)  # Запись ответа ПОЛЬЗОВАТЕЛЯ в ИСТОРИЮ
         request = shuttle.chat_completion(
             model=session.GPT_MODEL,
             messages=session.HISTORY,
             stream=False,
         )['choices'][0]['message']['content']
-        add_History("assistant", request)  # Запись ответа GPT в ИСТОРИЮ
+        add_history("assistant", request)  # Запись ответа GPT в ИСТОРИЮ
         if session.USER_SESSION_ID:
             cursor.execute("UPDATE sessions SET history = ? WHERE id = ?",
-                           (json.dumps(session.HISTORY_DATEBASE, indent=4, ensure_ascii=False), session.USER_SESSION_ID))
+                           (
+                               json.dumps(session.HISTORY_DATEBASE, indent=4, ensure_ascii=False),
+                               session.USER_SESSION_ID))
             connect.commit()
 
         else:

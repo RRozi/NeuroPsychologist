@@ -1,9 +1,9 @@
-
 from flet import *
 import flet as ft
 from time import sleep
 import threading
 from params import session
+
 
 
 def Home(page: Page):
@@ -12,20 +12,21 @@ def Home(page: Page):
             _mainContainer.width = page.window_width
             _mainContainer.height = page.window_height
             page.update()
+
     page.on_window_event = PageEventResize
 
     def animate() -> None:
         sleep(0.1)
-        Title.opacity = 1
-        Description.opacity = 1
+        title.opacity = 1
+        description.opacity = 1
         page.update()
 
     def TermsUser(e):
-        page.dialog = TermsUserINFO
-        TermsUserINFO.open = True
+        page.dialog = terms_user_info
+        terms_user_info.open = True
         page.update()
 
-    Title = ft.Text(
+    title = ft.Text(
         size=72,
         text_align=TextAlign.CENTER,
         font_family="Comic",
@@ -36,19 +37,19 @@ def Home(page: Page):
         opacity=0.0,
         spans=[
             ft.TextSpan(
-                "Нейропсихология",
+                "Киберпсихолог",
                 ft.TextStyle(shadow=ft.BoxShadow(
-                                spread_radius=1,
-                                blur_radius=16,
-                                color="#000000",
-                                offset=ft.Offset(1, 10),
-                                blur_style=ft.ShadowBlurStyle.SOLID)
+                    spread_radius=1,
+                    blur_radius=16,
+                    color="#000000",
+                    offset=ft.Offset(1, 10),
+                    blur_style=ft.ShadowBlurStyle.SOLID)
                 )
             )
         ]
     )
 
-    Description = ft.Text(
+    description = ft.Text(
         session.DESCRIPTION,
         size=14,
         text_align=TextAlign.CENTER,
@@ -59,12 +60,12 @@ def Home(page: Page):
 
     )
 
-    TermsUserINFO = ft.AlertDialog(
+    terms_user_info = ft.AlertDialog(
         title=ft.Text("Пользовательское соглашение."),
         content=ft.Text(session.TERMS_TEXT),
     )
 
-    TermsUserText = ft.Row([
+    terms_user_text = ft.Row([
         ft.Text("Вы автоматически соглашаетесь с ", size=13),
         ft.Text(
             size=13,
@@ -86,8 +87,7 @@ def Home(page: Page):
         spacing=2
     )
 
-
-    ButtonStartSession = ft.ElevatedButton(
+    button_start_session = ft.ElevatedButton(
         "Запустить сессию",
         style=ButtonStyle(shape=ft.RoundedRectangleBorder(radius=4)),
         width=350,
@@ -109,19 +109,19 @@ def Home(page: Page):
         content=ft.Stack([
             ft.Column(
                 [
-                    ft.Container(Title, alignment=alignment.top_center),
+                    ft.Container(title, alignment=alignment.top_center),
                     ft.Container(
-                        Description,
+                        description,
                         alignment=alignment.center,
                         margin=margin.only(top=-100)
                     ),
                     ft.Container(
-                        ButtonStartSession,
+                        button_start_session,
                         alignment=alignment.bottom_center,
                         margin=margin.only(top=110)
                     ),
                     ft.Container(
-                        TermsUserText,
+                        terms_user_text,
                         alignment=alignment.bottom_center,
                     ),
                 ],
